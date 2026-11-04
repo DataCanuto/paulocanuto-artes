@@ -1,0 +1,19 @@
+# Acervo: originais e cópias ficam fora do Git (ver docs/armazenamento.md)
+TEMAS/
+_duplicatas/
+media/
+
+# Dependências e builds
+node_modules/
+dist/
+coverage/
+
+# Credenciais
+.env
+.env.*
+!.env.example
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

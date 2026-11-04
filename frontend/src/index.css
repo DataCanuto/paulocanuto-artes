@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/* Telas baixas (celular deitado): a exposição compacta cabeçalho e controles para o livro crescer */
+@custom-variant baixa (@media (max-height: 500px));
+/* Telas com espaço para o índice de obras ao lado do livro (o mesmo teste está em Exposicao.jsx) */
+@custom-variant larga (@media (min-width: 640px) and (min-height: 501px));
+
+/* Identidade visual
+   parede: branco frio de galeria; grafite: tinta principal (lápis e caneta são materiais do artista);
+   caneta: azul de esferográfica, o único acento, usado em links, foco e navegação ativa;
+   sala: a sala escura onde a exposição é projetada; papel: as páginas do livro. */
+@theme {
+  --color-parede: #f4f4f2;
+  --color-grafite: #262624;
+  --color-suave: #6b6b66;
+  --color-linha: #d9d9d4;
+  --color-caneta: #2340b8;
+  --color-sala: #1e1e1d;
+  --color-papel: #fbfbf9;
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  /* Escala da "parede" do hero: quantos pixels representam 1 cm da obra real */
+  --cm: 1.9px;
+}
+@media (min-width: 768px) { :root { --cm: 2.1px; } }
+@media (min-width: 1280px) { :root { --cm: 2.5px; } }
+
+html { background: var(--color-parede); color: var(--color-grafite); }
+body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+:focus-visible { outline: 2px solid var(--color-caneta); outline-offset: 3px; }
+.na-sala :focus-visible { outline-color: #8ea2ff; }
+
+/* Sombra de quadro pendurado: a obra se destaca da parede sem moldura desenhada */
+.pendurada {
+  box-shadow: 0 1px 2px rgb(38 38 36 / 0.08), 0 14px 28px -18px rgb(38 38 36 / 0.45);
+}
+
+/* ---------- Páginas do livro (criadas pelo Flipbook, fora do React) ---------- */
+/* A page-flip força display:block e posição absoluta em cada página;
+   por isso o layout interno fica num "miolo" que preenche a página. */
+.pagina {
+  background: var(--color-papel);
+  color: var(--color-grafite);
+  overflow: hidden;
+}
+.pagina__miolo {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  /* Embaixo, espaço fixo para o número da página não encostar na ficha em páginas pequenas */
+  padding: 7% 8% calc(3% + 20px);
+}
+.pagina--esquerda { box-shadow: inset -18px 0 24px -20px rgb(0 0 0 / 0.28); }
+.pagina--direita { box-shadow: inset 18px 0 24px -20px rgb(0 0 0 / 0.28); }
+
+/* Área da obra: a imagem ocupa o maior espaço possível sem sair dos limites,
+   sempre inteira (contain), centralizada e sem distorção. */
+.pagina__obra { position: relative; flex: 1; min-height: 0; }
+.pagina__obra img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.pagina__obra.carregada img { opacity: 1; }
+.pagina__obra:not(.carregada)::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 28px; height: 28px; margin: -14px 0 0 -14px;
+  border-radius: 50%;
+  border: 2px solid var(--color-linha); border-top-color: var(--color-suave);
+  animation: girar 0.9s linear infinite;
+}
+
+.pagina__ficha { padding-top: 1.1em; font-size: clamp(11px, 1.6vh, 14px); line-height: 1.4; }
+.pagina__ficha .titulo { font-weight: 700; }
+.pagina__ficha .detalhe { color: var(--color-suave); }
+.pagina__folio {
+  position: absolute; bottom: 3.2%; font-size: 11px; color: var(--color-suave);
+  font-variant-numeric: tabular-nums;
+}
+.pagina--esquerda .pagina__folio { left: 8%; }
+.pagina--direita .pagina__folio, .pagina--unica .pagina__folio { right: 8%; }
+
+.pagina--rosto .pagina__miolo { justify-content: flex-end; padding-bottom: 14%; }
+.pagina--rosto .rosto__tema { font-size: clamp(28px, 5.5vh, 56px); font-weight: 800; letter-spacing: -0.035em; line-height: 1; }
+.pagina--rosto .rosto__pai { font-size: clamp(12px, 1.8vh, 15px); color: var(--color-suave); margin-bottom: 0.6em; }
+.pagina--rosto .rosto__info { margin-top: 1.2em; font-size: clamp(12px, 1.8vh, 15px); color: var(--color-suave); }
+.pagina--rosto .rosto__artista { margin-top: 0.3em; font-size: clamp(12px, 1.8vh, 15px); font-weight: 700; }
+
+@keyframes girar { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

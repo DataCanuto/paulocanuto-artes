@@ -1,0 +1,27 @@
+{
+  "name": "galeria-paulo-canuto-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API da galeria digital de Paulo Canuto",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "dev:json": "node --watch src/server.js --dados=json",
+    "start": "node src/server.js",
+    "catalogar": "node scripts/catalogar.js",
+    "db:migrate": "node database/migrate.js",
+    "db:seed": "node database/seed.js",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "test": "node --test",
+    "test:mysql": "node test/api.test.js --mysql"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "express-validator": "^7.3.2",
+    "mysql2": "^3.24.6",
+    "sharp": "^0.35.5"
+  }
+}
